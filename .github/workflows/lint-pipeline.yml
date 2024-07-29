@@ -1,0 +1,56 @@
+name: 🧹 Lint and Format Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    name: 🔍 Lint and Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: 🎯 Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.14'
+
+      - name: 📦 Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛡️ Verify code formatting
+        run: npm run format:check
+
+      - name: 🎨 Run linter
+        run: npm run lint
+
+      - name: 🚀 Post Lint Summary
+        if: always()
+        run: |
+          echo 
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f lint-results.txt ]; then
+            cat lint-results.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No lint issues found." >> $GITHUB_STEP_SUMMARY
+        shell: /usr/bin/bash -e {0}
+      
+      
+      

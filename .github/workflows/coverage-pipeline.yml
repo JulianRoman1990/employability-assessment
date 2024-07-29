@@ -1,0 +1,70 @@
+name: 🚀 Unit Tests Pipeline | Coverage Analysis 🛡️
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  coverage:
+    name: 🧪 Coverage Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+
+      - name: 🛠️ Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.10.0'
+
+      - name: 📦 Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 📄 Read Skip-Tests Configuration
+        id: read_config
+        run: |
+          skip_tests=$(jq -r '.skipTests' skip-tests.config.json)
+          if [ "$skip_tests" == "true" ]; then
+            echo "RUN_TESTS=false" >> $GITHUB_ENV
+          else
+            echo "RUN_TESTS=true" >> $GITHUB_ENV
+          fi
+        
+      - name: 🐛 Debug RUN_TESTS Value
+        run: echo "RUN_TESTS is set to ${{ env.RUN_TESTS }}"
+
+      - name: 🧪 Run Tests with Coverage
+        if: ${{ env.RUN_TESTS == 'true' }}
+        run: npm run test:cov 
+
+      - name: 📝 Report Execution Results
+        run: |
+          if [ "${{ env.RUN_TESTS }}" == "true" ]; then
+            echo "Tests were executed."
+          else
+            echo "Tests were skipped based on configuration."
+          fi
+
+      - name: 📊 Upload coverage to Codecov
+        if: ${{ env.RUN_TESTS == 'true' }}
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+        
