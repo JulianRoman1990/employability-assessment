@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { PersistenceModule } from './persistence/persistence.module';
 import { ConfigModule } from '@nestjs/config';
 import dbConfig from './config/db-config';
+import { FilesModule } from './modules/files/files.module';
+import { ErrorModule } from './common/errors/errors.module';
 
 @Module({
   imports: [
@@ -10,7 +12,9 @@ import dbConfig from './config/db-config';
       load: [dbConfig],
       envFilePath: '.env',
     }),
-    PersistenceModule
+    PersistenceModule,
+    FilesModule,
+    ErrorModule
   ],
   controllers: [],
   providers: [],
