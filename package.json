@@ -31,6 +31,11 @@
     "class-validator": "^0.14.1",
     "joi": "^17.13.3",
     "mongoose": "^8.5.1",
+    "@nestjs/swagger": "^7.4.0",
+    "class-validator": "^0.14.1",
+    "cloudinary": "^2.3.1",
+    "joi": "^17.13.3",
+    "multer-cloudinary": "^1.1.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
