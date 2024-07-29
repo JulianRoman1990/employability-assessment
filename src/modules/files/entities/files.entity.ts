@@ -21,7 +21,7 @@ export class File {
   mimetype: string;
 
   @Prop()
-  description?: string; // Campo opcional para descripción u otros metadatos
+  description?: string;
 }
 
 export const FileSchema = SchemaFactory.createForClass(File);
