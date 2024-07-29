@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { PersistenceModule } from './persistence/persistence.module';
+import { ConfigModule } from '@nestjs/config';
+import dbConfig from './config/db-config';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [dbConfig],
+      envFilePath: '.env',
+    }),
+    PersistenceModule
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
